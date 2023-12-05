@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests.requestMatchers(
                                 "/auth/**",
-                                "/item/items",
+                                "/item",
                                 "/category/**"
                         ).permitAll()
                 )
@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 "/item/new",
                                 "/item/modify",
                                 "/item/delete",
+                                "/item/heart",
                                 "/heart/**"
                         ).authenticated())
 

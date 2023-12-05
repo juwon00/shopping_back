@@ -1,20 +1,25 @@
 package com.shopping2.item.service;
 
+import com.shopping2.auth.token.JwtService;
 import com.shopping2.category.Category;
 import com.shopping2.category.CategoryRepository;
+import com.shopping2.heart.Heart;
 import com.shopping2.heart.HeartRepository;
 import com.shopping2.item.Item;
-import com.shopping2.item.dto.ItemDelete;
-import com.shopping2.item.dto.ItemModify;
-import com.shopping2.item.dto.ItemRegister;
-import com.shopping2.item.dto.ItemSaveResponse;
+import com.shopping2.item.dto.*;
 import com.shopping2.item.repository.ItemRepository;
+import com.shopping2.user.UserRepository;
+import com.shopping2.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -25,6 +30,8 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
     private final HeartRepository heartRepository;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     public ItemSaveResponse createItem(ItemRegister item) {
 
@@ -93,6 +100,22 @@ public class ItemService {
         if (!itemRepository.existsByCategory(findItem.getCategory())) {
             categoryRepository.delete(findItem.getCategory());
         }
+    }
+
+    public Page<ItemDto> getHeartItemPage(String jwt, Pageable pageable) {
+        jwt = jwt.split(" ")[1];
+        String userId = jwtService.extractUserName(jwt);
+        User user = userRepository.findByLoginId(userId)
+                .orElseThrow(NoSuchElementException::new);
+
+        List<Heart> heartList = heartRepository.findAllByUser(user);
+
+        List<Long> userIdList = new ArrayList<>(); // user 기본키 리스트
+        for (Heart heart : heartList) {
+            Long id = heart.getItem().getId();
+            userIdList.add(id);
+        }
+        return itemRepository.heartPage(userIdList, pageable);
     }
 }
 

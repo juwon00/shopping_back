@@ -35,7 +35,7 @@ public class ItemController {
         return ResponseEntity.ok().headers(headers).body(message);
     }
 
-    @GetMapping("/items")
+    @GetMapping
     public ResponseEntity<Message> categoryPage(ItemSearchCondition condition, Pageable pageable) {
 
         Page<ItemDto> result = itemRepository.categoryPage(condition, pageable);
@@ -46,6 +46,19 @@ public class ItemController {
 
         return ResponseEntity.ok().headers(headers).body(message);
     }
+
+    @GetMapping("/heart")
+    public ResponseEntity<Message> heartItemPage(@RequestHeader("Authorization") String jwt, Pageable pageable) {
+
+        Page<ItemDto> result = itemService.getHeartItemPage(jwt, pageable);
+
+        Message message = new Message(StatusEnum.OK, "성공 코드", result);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
+
+        return ResponseEntity.ok().headers(headers).body(message);
+    }
+
 
     @PatchMapping("/modify")
     public ResponseEntity<Message> modifyItem(@ModelAttribute ItemModify item) {

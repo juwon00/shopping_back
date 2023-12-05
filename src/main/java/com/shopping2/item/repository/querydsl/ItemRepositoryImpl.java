@@ -43,6 +43,24 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
+    @Override
+    public Page<ItemDto> heartPage(List<Long> userIdList, Pageable pageable) {
+        List<ItemDto> content = queryFactory
+                .select(new QItemDto(item.name, item.price, item.url, item.heartsNum))
+                .from(item)
+                .where(item.id.in(userIdList))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(item.count())
+                .from(item)
+                .where(item.id.in(userIdList));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
     private BooleanExpression categoryEq(Long categoryId) {
         return categoryId != null ? item.category.id.eq(categoryId) : null;
     }
