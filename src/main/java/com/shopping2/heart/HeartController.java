@@ -18,9 +18,9 @@ public class HeartController {
     private final HeartService heartService;
 
     @PostMapping
-    public ResponseEntity<Message> heart(@RequestBody HeartDto heartDto) {
+    public ResponseEntity<Message> heart(@RequestHeader("Authorization") String jwt, @RequestBody HeartDto heartDto) {
 
-        heartService.heart(heartDto);
+        heartService.heart(heartDto, jwt);
 
         Message message = new Message(StatusEnum.OK, "성공 코드", heartDto.getItemName() + " +1 좋아요");
         HttpHeaders headers = new HttpHeaders();
@@ -32,9 +32,9 @@ public class HeartController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Message> unHeart(@RequestBody HeartDto heartDto) {
+    public ResponseEntity<Message> unHeart(@RequestHeader("Authorization") String jwt, @RequestBody HeartDto heartDto) {
 
-        heartService.unHeart(heartDto);
+        heartService.unHeart(heartDto, jwt);
 
         Message message = new Message(StatusEnum.OK, "성공 코드", heartDto.getItemName() + " 좋아요가 취소되었습니다.");
         HttpHeaders headers = new HttpHeaders();

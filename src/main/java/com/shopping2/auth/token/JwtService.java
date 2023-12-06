@@ -24,7 +24,12 @@ public class JwtService {
 
     private final JwtProperties jwtProperties;
 
-    public String extractUserName(String token) {
+    public String subStringBearerAndExtractUserLoginId(String jwt) {
+        jwt = jwt.split(" ")[1];
+        return extractUserLoginId(jwt);
+    }
+
+    public String extractUserLoginId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -69,7 +74,7 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUserName(token);
+        final String username = extractUserLoginId(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 

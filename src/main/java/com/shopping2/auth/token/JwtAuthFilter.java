@@ -41,7 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         jwt = authHeader.substring(7); // "Bearer " 제거
-        memberLoginId = jwtService.extractUserName(jwt); // extract memberLoginId from JWT Token
+        memberLoginId = jwtService.extractUserLoginId(jwt); // extract memberLoginId from JWT Token
 
         if (memberLoginId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(memberLoginId);

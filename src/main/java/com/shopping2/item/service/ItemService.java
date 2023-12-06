@@ -103,8 +103,7 @@ public class ItemService {
     }
 
     public Page<ItemDto> getHeartItemPage(String jwt, Pageable pageable) {
-        jwt = jwt.split(" ")[1];
-        String userId = jwtService.extractUserName(jwt);
+        String userId = jwtService.subStringBearerAndExtractUserLoginId(jwt);
         User user = userRepository.findByLoginId(userId)
                 .orElseThrow(NoSuchElementException::new);
 

@@ -22,9 +22,9 @@ public class HeartService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
-    public void heart(HeartDto heartDto) {
+    public void heart(HeartDto heartDto, String jwt) {
 
-        String userId = jwtService.extractUserName(heartDto.getUserJwt());
+        String userId = jwtService.subStringBearerAndExtractUserLoginId(jwt);
         User user = userRepository.findByLoginId(userId).orElseThrow(NoSuchElementException::new);
         Item item = itemRepository.findByName(heartDto.getItemName()).orElseThrow(NoSuchElementException::new);
 
@@ -39,9 +39,9 @@ public class HeartService {
         itemRepository.save(item);
     }
 
-    public void unHeart(HeartDto heartDto) {
+    public void unHeart(HeartDto heartDto, String jwt) {
 
-        String userId = jwtService.extractUserName(heartDto.getUserJwt());
+        String userId = jwtService.subStringBearerAndExtractUserLoginId(jwt);
         User user = userRepository.findByLoginId(userId).orElseThrow(NoSuchElementException::new);
         Item item = itemRepository.findByName(heartDto.getItemName()).orElseThrow(NoSuchElementException::new);
 
