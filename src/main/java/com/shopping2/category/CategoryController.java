@@ -1,16 +1,12 @@
 package com.shopping2.category;
 
 import com.shopping2.status.Message;
-import com.shopping2.status.StatusEnum;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +26,6 @@ public class CategoryController {
             String name = category.getName();
             categoryNameList.add(name);
         }
-
-        Message message = new Message(StatusEnum.OK, "성공 코드", categoryNameList);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(message);
+        return Message.MessagetoResponseEntity(categoryNameList);
     }
 }

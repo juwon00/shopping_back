@@ -7,6 +7,7 @@ import com.shopping2.auth.token.JwtService;
 import com.shopping2.auth.token.TokenRepository;
 import com.shopping2.auth.token.model.Token;
 import com.shopping2.auth.token.model.TokenType;
+import com.shopping2.error.CustomException;
 import com.shopping2.user.UserRepository;
 import com.shopping2.user.model.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+import static com.shopping2.status.ErrorCode.DUPLICATED_USER_LOGIN_ID;
+import static com.shopping2.status.ErrorCode.NOT_EXIST_USER_LOGIN_ID;
 import static com.shopping2.user.model.Role.USER;
 
 @Service
@@ -38,7 +41,7 @@ public class AuthService {
 
         if (userRepository.existsByLoginId(request.getLoginId())) {
             // 중복 아이디가 이미 존재하는 경우 예외 처리 또는 에러 메시지 반환
-            throw new DuplicateKeyException("이미 사용 중인 아이디입니다.");
+            throw new CustomException(DUPLICATED_USER_LOGIN_ID);
         }
 
         var user = User.builder()
@@ -70,7 +73,7 @@ public class AuthService {
         // 여기까지오면 아이디와 비밀번호과 정확하다는 의미
 
         var user = userRepository.findByLoginId(request.getLoginId())
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(NOT_EXIST_USER_LOGIN_ID));
         var jwtToken = jwtService.generateToken(user, user.getRole());
         var refreshToken = jwtService.generateRefreshToken(user, user.getRole());
         revokeAllUserTokens(user);

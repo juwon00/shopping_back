@@ -3,26 +3,24 @@ package com.shopping2.auth;
 import com.shopping2.auth.dto.AuthRequest;
 import com.shopping2.auth.dto.AuthResponse;
 import com.shopping2.auth.dto.RegisterRequest;
+import com.shopping2.error.CustomException;
 import com.shopping2.status.Message;
-import com.shopping2.status.StatusEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+
+import static com.shopping2.status.ErrorCode.NOT_VALIDATED_USER;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,35 +34,15 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Message> register(
             @Valid @RequestBody RegisterRequest request, BindingResult bindingResult
-    ) throws DuplicateKeyException {
+    ) throws DuplicateKeyException, CustomException {
 
         if (bindingResult.hasErrors()) {
-            StringBuilder sb = new StringBuilder();
-            bindingResult.getAllErrors().forEach(objectError -> {
-                FieldError field = (FieldError) objectError;
-                String message = objectError.getDefaultMessage();
-
-                System.out.println(field.getField() + ": " + message);
-
-                sb.append("field: " + field.getField());
-                sb.append("message: " + message);
-            });
-            return ResponseEntity.badRequest()
-                    .headers(new HttpHeaders())
-                    .body(new Message(sb));
+            throw new CustomException(NOT_VALIDATED_USER);
         }
-
         AuthResponse result = authService.register(request);
 
-        Message message = new Message(StatusEnum.OK, "성공 코드", result);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-
         log.info("회원가입 " + result);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(message);
+        return Message.MessagetoResponseEntity(result);
     }
 
 
@@ -75,15 +53,8 @@ public class AuthController {
     ) {
         AuthResponse result = authService.authenticate(request);
 
-        Message message = new Message(StatusEnum.OK, "성공 코드", result);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-
         log.info("로그인 " + result);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(message);
+        return Message.MessagetoResponseEntity(result);
     }
 
 
@@ -95,15 +66,8 @@ public class AuthController {
     ) throws IOException {
         AuthResponse result = authService.refreshToken(request, response);
 
-        Message message = new Message(StatusEnum.OK, "성공 코드", result);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-
         log.info("access-token 재발급 " + result);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(message);
+        return Message.MessagetoResponseEntity(result);
     }
 
 }
