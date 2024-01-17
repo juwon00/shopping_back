@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ItemRepositoryCustom {
 
-    Page<ItemDto> categoryPage(ItemSearchCondition condition, Pageable pageable);
+    Page<ItemDto> ItemPage(ItemSearchCondition condition, Pageable pageable);
 
     Page<ItemDto> heartPage(List<Long> userIdList, Pageable pageable);
 }

@@ -11,7 +11,7 @@ public enum ErrorCode {
     CUSTOM_ERROR(HttpStatus.BAD_REQUEST, "알 수 없는 이상한 에러"),
 
     // auth
-    NOT_VALIDATED_USER(HttpStatus.BAD_REQUEST, "형식에 맞게 입력해 주세요"),
+    NOT_VALIDATED_USER(HttpStatus.BAD_REQUEST, "형식에 맞게 입력해 주세요."),
     DUPLICATED_USER_LOGIN_ID(HttpStatus.CONFLICT, "이미 사용중인 아이디 입니다."),
     NOT_EXIST_USER_LOGIN_ID(HttpStatus.CONFLICT, "아이디 혹은 비밀번호가 틀립니다."),
 

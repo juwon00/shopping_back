@@ -29,9 +29,9 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Message> categoryPage(ItemSearchCondition condition, Pageable pageable) {
+    public ResponseEntity<Message> ItemPage(ItemSearchCondition condition, Pageable pageable) {
 
-        Page<ItemDto> result = itemRepository.categoryPage(condition, pageable);
+        Page<ItemDto> result = itemRepository.ItemPage(condition, pageable);
         return Message.MessagetoResponseEntity(result);
     }
 

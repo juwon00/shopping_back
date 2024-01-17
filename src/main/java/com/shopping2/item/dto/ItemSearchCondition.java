@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class ItemSearchCondition {
 
-    private Long categoryId;
+    private String category;
+    private String latest;
 }
